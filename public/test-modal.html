@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Test Modal</h1>
+        
+        <!-- Test Button -->
+        <button class="btn btn-primary" onclick="openTestModal()">Open Test Modal</button>
+        
+        <!-- Divisi Card Test -->
+        <div class="card mt-3" style="cursor: pointer;" onclick="openDivisiModal('keagamaan')">
+            <div class="card-body">
+                <h5>Test Divisi Card</h5>
+                <p>Click to open divisi modal</p>
+            </div>
+        </div>
+        
+        <!-- Fungsionaris Card Test -->
+        <div class="card mt-3" style="cursor: pointer;" onclick="openFungsionarisModal('ketua-umum')">
+            <div class="card-body">
+                <h5>Test Fungsionaris Card</h5>
+                <p>Click to open fungsionaris modal</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Modal -->
+    <div class="modal fade" id="testModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Test Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>This is a test modal to verify Bootstrap is working.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divisi Modal (copied from partials) -->
+    <div class="modal fade" id="divisiModal" tabindex="-1" aria-labelledby="divisiModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #37517e; color: white;">
+                    <h5 class="modal-title" id="divisiModalLabel">Anggota Divisi</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 30px;">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4 id="divisiDescTitle">Test Divisi</h4>
+                            <p id="divisiDescContent">This is test content for divisi modal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fungsionaris Modal (copied from partials) -->
+    <div class="modal fade" id="fungsionarisModal" tabindex="-1" aria-labelledby="fungsionarisModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #37517e; color: white;">
+                    <h5 class="modal-title" id="fungsionarisModalLabel">Detail Fungsionaris</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 30px;">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4 id="fungsionarisDescTitle">Test Fungsionaris</h4>
+                            <p id="fungsionarisDescContent">This is test content for fungsionaris modal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        console.log('Test script loading...');
+        
+        function openTestModal() {
+            console.log('Opening test modal...');
+            const modal = new bootstrap.Modal(document.getElementById('testModal'));
+            modal.show();
+        }
+        
+        function openDivisiModal(key) {
+            console.log('Opening divisi modal with key:', key);
+            const modalEl = document.getElementById('divisiModal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else {
+                console.error('Divisi modal not found');
+            }
+        }
+        
+        function openFungsionarisModal(key) {
+            console.log('Opening fungsionaris modal with key:', key);
+            const modalEl = document.getElementById('fungsionarisModal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else {
+                console.error('Fungsionaris modal not found');
+            }
+        }
+        
+        console.log('Test functions loaded');
+    </script>
+</body>
+</html>
