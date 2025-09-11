@@ -43,6 +43,12 @@ Railway menyediakan PostgreSQL gratis:
 - ✅ **Fixed**: Sudah diupdate ke PHP 8.2 di `composer.json`
 - ✅ **Fixed**: Sudah ditambahkan `nixpacks.toml` dengan PHP_VERSION = "8.2"
 
+#### Healthcheck Failure (Current Issue)
+- ✅ **Fixed**: Ditambahkan route `/health` untuk healthcheck
+- ✅ **Fixed**: Diupdate `railway.json` dengan healthcheckPath: "/health"
+- ✅ **Fixed**: Diperpanjang healthcheckTimeout menjadi 300 detik
+- ✅ **Fixed**: Ditambahkan startup script yang lebih robust
+
 #### Build Failures
 ```bash
 # Check build logs di Railway dashboard
@@ -55,6 +61,22 @@ composer install --no-dev --optimize-autoloader
 # Check deploy logs
 # Pastikan APP_KEY sudah di-set
 # Pastikan database connection benar
+```
+
+#### Environment Variables yang Diperlukan
+Set di Railway Dashboard > Variables:
+```bash
+APP_NAME="HME Poliban"
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:KhUmI9k//WiT6BW5g4p2AIZkp61XQENc8cBBe+7ESKo=
+```
+
+#### Alternative: Deploy tanpa Database
+Jika tidak memerlukan database, gunakan SQLite:
+```bash
+DB_CONNECTION=sqlite
+DB_DATABASE=/tmp/database.sqlite
 ```
 
 ### 7. Monitoring

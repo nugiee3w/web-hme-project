@@ -1,9 +1,13 @@
 # Nixpacks configuration for Railway.app deployment
 [phases.install]
-cmds = ["composer install --no-dev --optimize-autoloader"]
+cmds = [
+    "composer install --no-dev --optimize-autoloader --no-interaction"
+]
 
 [phases.build]
 cmds = [
+    "cp .env.example .env",
+    "php artisan key:generate --force --no-interaction",
     "php artisan config:cache",
     "php artisan route:cache",
     "php artisan view:cache"

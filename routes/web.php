@@ -52,6 +52,20 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->resource('kegiatan', KegiatanController::class);
 });
 
+// Health check route for Railway.app deployment
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'HME Poliban Website is running',
+        'timestamp' => now()->toISOString(),
+        'app' => [
+            'name' => config('app.name'),
+            'env' => config('app.env'),
+            'version' => '1.0.0'
+        ]
+    ], 200);
+});
+
 
 
 
