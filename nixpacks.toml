@@ -1,0 +1,20 @@
+# Nixpacks configuration for Railway.app deployment
+providers = ["php"]
+
+[phases.setup]
+nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.curl", "php82Extensions.zip", "php82Extensions.gd"]
+
+[phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader --no-interaction"]
+
+[phases.build]
+cmds = [
+    "cp .env.example .env",
+    "echo 'APP_KEY=base64:KhUmI9k//WiT6BW5g4p2AIZkp61XQENc8cBBe+7ESKo=' >> .env",
+    "echo 'APP_ENV=production' >> .env",
+    "echo 'APP_DEBUG=false' >> .env",
+    "php artisan config:cache"
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
