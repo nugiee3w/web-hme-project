@@ -1,0 +1,74 @@
+# Simple Dockerfile for Railway
+FROM php:8.2-apache
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Install Node.js 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    zip \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo_mysql \
+        mysqli \
+        mbstring \
+        zip \
+        exif \
+        pcntl \
+        bcmath \
+        gd
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
+
+# Update Apache configuration
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Copy application files
+COPY . /var/www/html
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install Node dependencies and build assets
+RUN npm install && npm run build
+
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Copy and setup start script
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Expose port
+EXPOSE 80
+
+# Start the application
+CMD ["/usr/local/bin/start.sh"]

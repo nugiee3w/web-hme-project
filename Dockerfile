@@ -1,20 +1,23 @@
-# Multi-stage build
-FROM node:18-alpine AS node-builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-
-# Main PHP image
+# Laravel on Railway - Optimized Dockerfile
 FROM php:8.2-apache
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 # Set working directory
 WORKDIR /var/www/html
 
+# Install Node.js first
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Set environment variables to avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
+
 # Install system dependencies and PHP extensions
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     libpng-dev \
@@ -30,7 +33,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql mysqli mbstring exif pcntl bcmath gd zip \
     && docker-php-ext-enable pdo_mysql mysqli \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/debconf/*
 
 # Verify PHP extensions
 RUN php -m | grep -E "(pdo|pdo_mysql|mysqli)" && echo "✅ MySQL extensions installed successfully"
@@ -38,34 +42,23 @@ RUN php -m | grep -E "(pdo|pdo_mysql|mysqli)" && echo "✅ MySQL extensions inst
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Enable Apache mod_rewrite and configure document root
+RUN a2enmod rewrite \
+    && sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf \
+    && sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
 # Copy application files
 COPY . /var/www/html
 
-# Copy built assets from node-builder stage
-COPY --from=node-builder /app/public/build /var/www/html/public/build
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
+    && npm install \
+    && npm run build
 
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Create Apache configuration
-RUN echo '<VirtualHost *:80>\n\
-    ServerName localhost\n\
-    DocumentRoot /var/www/html/public\n\
-    <Directory /var/www/html/public>\n\
-        AllowOverride All\n\
-        Require all granted\n\
-    </Directory>\n\
-    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
-    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
-</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 # Expose port 80
 EXPOSE 80

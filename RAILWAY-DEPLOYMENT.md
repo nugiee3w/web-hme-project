@@ -178,20 +178,40 @@ try {
 "
 ```
 
-### 3. Build Fails
+### 3. Build Fails / Docker Build Issues
 
-**Common Issues:**
-- Node.js build errors: Check `package.json` dan dependencies
-- Composer errors: Check `composer.json` dan PHP version compatibility
-- Permission errors: Sudah diatasi di Dockerfile
+**Jika build gagal dengan debconf errors:**
 
-**Debug Build Process:**
-1. Check build logs di Railway Dashboard
-2. Test local build:
+1. **Gunakan Dockerfile yang telah diperbaiki** (sudah ada `DEBIAN_FRONTEND=noninteractive`)
+
+2. **Alternatif Dockerfile (jika masih error):**
    ```bash
-   docker build -t test-app .
-   docker run -p 8080:80 test-app
+   # Ganti dengan versi minimal
+   mv Dockerfile Dockerfile.backup
+   mv Dockerfile.minimal Dockerfile
    ```
+
+3. **Test build lokal:**
+   ```bash
+   docker build -t test-laravel .
+   docker run -p 8080:80 test-laravel
+   ```
+
+**Common Build Issues:**
+- **debconf frontend errors**: Sudah diatasi dengan `DEBIAN_FRONTEND=noninteractive`
+- **Node.js build errors**: Check `package.json` dan pastikan Vite config benar
+- **Composer errors**: Pastikan PHP version compatibility
+- **Memory issues**: Railway memiliki limit memory untuk build
+
+**Jika masih gagal, coba Dockerfile alternatif:**
+1. `Dockerfile.simple` - Single stage build
+2. `Dockerfile.minimal` - Menggunakan pre-built PHP image
+3. `Dockerfile.debug` - Untuk debugging step-by-step
+
+**Manual Build Test Railway:**
+```bash
+railway run bash -c "php -v && php -m | grep mysql && composer --version"
+```
 
 ### 4. App Tidak Bisa Diakses
 
