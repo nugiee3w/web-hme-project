@@ -19,13 +19,15 @@ Route::get('/', function () {
 // Route public untuk detail kegiatan
 Route::get('/kegiatan/{kegiatan:id}/detail', [KegiatanController::class, 'showPublic'])->name('kegiatan.detail');
 
-Route::get('login', function() {
-    return view('pages.auth.auth-login', ['type_menu' => '']);
-})->name('login');
+Route::middleware('guest')->group(function () {
+    Route::get('login', function() {
+        return view('pages.auth.auth-login', ['type_menu' => '']);
+    })->name('login');
 
-Route::get('/forget', function(){
-    return view('pages.auth.auth-forgot-password');
-})->name('forget');
+    Route::get('/forget', function(){
+        return view('pages.auth.auth-forgot-password');
+    })->name('forget');
+});
 
 
 Route::middleware(['auth'])->group(function () {

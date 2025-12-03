@@ -53,40 +53,9 @@
                     </a>
                 </div>
             @empty
-                <!-- Fallback ke data static jika belum ada data kegiatan -->
-                <div class="col-lg-4 col-md-6 portfolio-item filter-tahunan">
-                    <div class="portfolio-img"><img src="assets/img/portfolio/Pelantikan1.jpg" class="img-fluid"
-                            alt=""></div>
-                    <div class="portfolio-info">
-                        <h4>Pelantikan Himpunan Mahasiswa Elektro Periode 2024/2025</h4>
-                    </div>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Belum ada kegiatan yang tersedia saat ini.</p>
                 </div>
-
-                <div class="col-lg-4 col-md-6 portfolio-item filter-tahunan">
-                    <div class="portfolio-img"><img src="assets/img/portfolio/takjil.jpg" class="img-fluid"
-                            alt=""></div>
-                    <div class="portfolio-info">
-                        <h4>Buka bersama & bagi takjil </h4>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6 portfolio-item filter-divisi">
-                    <div class="portfolio-img"><img src="assets/img/portfolio/Coming.PNG" class="img-fluid"
-                            alt=""></div>
-                    <div class="portfolio-info">
-                        <h4>Workshop Curriculum Vitae 2024</h4>
-                    </div>
-                </div>
-
-                @for($i = 0; $i < 6; $i++)
-                    <div class="col-lg-4 col-md-6 portfolio-item filter-lainnya">
-                        <div class="portfolio-img"><img src="assets/img/portfolio/Coming.PNG" class="img-fluid"
-                                alt=""></div>
-                        <div class="portfolio-info">
-                            <h4>Coming Soon</h4>
-                        </div>
-                    </div>
-                @endfor
             @endforelse
         </div>
 
